@@ -17,8 +17,12 @@ library
                , containers
                , aeson
                , email-validate
+               , time
+               , lens
+               , jsaddle-dom 
   exposed-modules:
     Frontend
+    JS
   ghc-options: -Wall -Wredundant-constraints -Wincomplete-uni-patterns -Wincomplete-record-updates -O -fno-show-valid-hole-fits
 
 executable frontend
@@ -34,6 +38,9 @@ executable frontend
                , containers
                , aeson
                , email-validate
+               , time
+               , lens
+               , jsaddle-dom
   ghc-options: -threaded -O -Wall -Wredundant-constraints -Wincomplete-uni-patterns -Wincomplete-record-updates -fno-show-valid-hole-fits
   if impl(ghcjs)
     ghc-options: -dedupe
