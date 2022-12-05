@@ -145,9 +145,9 @@ computeFrame (Video videoEl) (CanvasContext ctx) = liftJSM $ do
         clog newData
         --newData' <- array newData
         --clog newData'
-        clampedData <- new (jsg "Uint8ClampedArray") newData
+        clampedData <- new (jsg "Uint8ClampedArray") [newData]
         clog clampedData
-        imageData <- new (jsg "ImageData") (clampedData, width, height) 
+        imageData <- new (jsg "ImageData") (clampedData, width, height)
         clog imageData
 --         clog frame
 --         clog "=----="
