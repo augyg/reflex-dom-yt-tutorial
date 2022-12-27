@@ -63,28 +63,6 @@ countTimeFrom interval ev = do
   tick <- tickLossyFrom' $ (interval,) <$> eventTime
   --pure $ ffor2 eventTime tick $ \s n -> diffUTCTime (_tickInfo_lastUTC n) s 
   pure $ attachWith (\start now -> diffUTCTime (_tickInfo_lastUTC now) start) (current eventTimeDyn) tick 
-  
--- NominalDiffTime affects how often we "sample" the system time 
-
-
-
--- data Maybe a = Just a | Nothing
-
-
-
-
--- do
---   document <- getCurrentDocumentUnchecked
---   document ^. js1 "getElementById" "someId" .^ jss "innerText" "Whassup dog" 
-  
-
-
-
-
-
-
-
--- document.getElementByID('someId').innerText = "whassup dog" 
 
 elSelfClosing :: DomBuilder t m => T.Text -> Map T.Text T.Text -> m ()
 elSelfClosing tag attrs = elAttr tag attrs blank
@@ -107,8 +85,21 @@ frontend = Frontend
 
       elAttr "canvas" ("id" =: "myCanvas" <> "width" =: "480" <> "height" =: "270") blank
 
-      
 
+      stop <- button "stop"
+      start <- button "start"
+      restart <- button "restart"
+
+      start' <- countTimeFrom 0.01 start 
+      restart' <- countTimeFrom 0.01 restart
+
+      timeEvent <- switchHold ((0 :: NominalDiffTime) <$ start) $ leftmost [ (((0 :: NominalDiffTime) <$ never) <$ stop)
+                                                                           , start' <$ start
+                                                                           , restart' <$ restart
+                                                                           ] 
+      timeDyn <- foldDyn (\new old -> new + old) 0 timeEvent
+      dynText $ T.pack . show <$> timeDyn
+      
       -- postBuildEvent <- getPostBuild
 
       prerender (pure ()) setVideoSrcObject  
